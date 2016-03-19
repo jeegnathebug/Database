@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="paneMain" prefHeight="500.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+	<children>
+		<MenuBar fx:id="menuBar" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<menus>
+				<Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+					<items>
+						<Menu fx:id="menuTheme" mnemonicParsing="false" text="Theme">
+							<items>
+								<RadioMenuItem fx:id="menuItemLight" mnemonicParsing="false" selected="true" text="Light">
+									<toggleGroup>
+										<ToggleGroup fx:id="radioButtonsTheme" />
+									</toggleGroup>
+								</RadioMenuItem>
+								<RadioMenuItem fx:id="menuItemDark" mnemonicParsing="false" text="Dark" toggleGroup="$radioButtonsTheme" />
+							</items>
+						</Menu>
+                  <MenuItem fx:id="menuItemDisconnect" mnemonicParsing="false" onAction="#disconnect" text="Disconnect" />
+						<MenuItem fx:id="menuItemClose" mnemonicParsing="false" onAction="#exit" text="Close" />
+					</items>
+				</Menu>
+				<Menu fx:id="menuEdit" mnemonicParsing="false" text="Edit">
+					<items>
+						<MenuItem fx:id="menuItemClear" mnemonicParsing="false" onAction="#clear" text="Clear" />
+					</items>
+				</Menu>
+				<Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
+					<items>
+						<MenuItem fx:id="menuItemAbout" mnemonicParsing="false" text="About" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+		
+                  <AnchorPane fx:id="paneQuery" layoutX="-34.0" layoutY="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="40.0">
+         <children>
+            <GridPane fx:id="paneChoice" prefHeight="117.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Button fx:id="buttonGetBook" mnemonicParsing="false" onAction="#choiceGetBook" prefWidth="250.0" text="Get Book">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Button>
+                  <Button fx:id="buttonBookReport" mnemonicParsing="false" onAction="#choiceBookReport" prefWidth="250.0" text="Book Report" GridPane.rowIndex="1" />
+                  <Button fx:id="buttonNewPatron" mnemonicParsing="false" onAction="#choiceNewPatron" prefWidth="250.0" text="New Patron" GridPane.rowIndex="2" />
+                  <Button fx:id="buttonNewBook" mnemonicParsing="false" onAction="#choiceNewBook" prefWidth="250.0" text="New Book" GridPane.rowIndex="3" />
+                  <Button fx:id="buttonLoan" mnemonicParsing="false" onAction="#choiceLoan" prefWidth="250.0" text="Loan" GridPane.columnIndex="1" />
+                  <Button fx:id="buttonReturn" mnemonicParsing="false" onAction="#choiceReturn" prefWidth="250.0" text="Return" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="buttonRenew" mnemonicParsing="false" onAction="#choiceRenew" prefWidth="250.0" text="Renew" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Button fx:id="buttonRecommend" mnemonicParsing="false" onAction="#choiceRecommend" prefWidth="250.0" text="Recommend" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               </children>
+            </GridPane>
+            <AnchorPane fx:id="paneGetBook" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Enter ISBN" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <TextField fx:id="textFieldIsbnGetBook" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+                  <Button fx:id="buttonEnterGetBook" defaultButton="true" layoutX="547.0" layoutY="70.0" mnemonicParsing="false" onAction="#enterGetBook" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneBookReport" layoutX="10.0" layoutY="10.0" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Button fx:id="buttonEnterBookReport" defaultButton="true" mnemonicParsing="false" onAction="#enterBookReport" text="Book Report" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneNewPatron" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label layoutY="5.0" text="Enter firstname" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <Label layoutY="35.0" text="Enter lastname" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                  <Label layoutY="65.0" text="Enter email" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="65.0" />
+                  <TextField fx:id="textFieldFirstnameNewPatron" layoutX="115.0" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+                  <TextField fx:id="textFieldLastnameNewPatron" layoutX="115.0" layoutY="30.0" prefHeight="25.0" prefWidth="322.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="30.0" />
+                  <TextField fx:id="textFieldEmail" layoutX="115.0" layoutY="60.0" prefHeight="25.0" prefWidth="322.0" promptText="Optional" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="60.0" />
+            		<Button fx:id="buttonEnterNewPatron" defaultButton="true" layoutX="537.0" layoutY="60.0" mnemonicParsing="false" onAction="#enterNewPatron" text="Enter" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneNewBook" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Enter ISBN" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <Label layoutX="20.0" layoutY="20.0" text="Enter title" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                  <Label layoutY="66.0" text="Enter genre" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="65.0" />
+                  <Label layoutX="20.0" layoutY="20.0" text="Enter firstname" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="5.0" />
+                  <Label layoutX="298.0" layoutY="35.0" text="Enter lastname" AnchorPane.rightAnchor="202.0" AnchorPane.topAnchor="35.0" />
+                  <Label layoutX="298.0" layoutY="65.0" text="Enter date" AnchorPane.rightAnchor="233.0" AnchorPane.topAnchor="65.0" />
+                  <TextField fx:id="textFieldIsbnNewBook" prefHeight="25.0" prefWidth="174.0" AnchorPane.leftAnchor="115.0" AnchorPane.topAnchor="0.0" />
+                  <TextField fx:id="textFieldTitle" layoutX="10.0" layoutY="10.0" prefHeight="25.0" prefWidth="174.0" AnchorPane.leftAnchor="115.0" AnchorPane.topAnchor="30.0" />
+                  <TextField fx:id="textFieldGenre" layoutX="114.0" layoutY="60.0" prefHeight="25.0" prefWidth="174.0" AnchorPane.leftAnchor="115.0" AnchorPane.topAnchor="60.0" />
+                  <TextField fx:id="textFieldFirstnameNewBook" layoutX="30.0" layoutY="30.0" prefHeight="25.0" prefWidth="174.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TextField fx:id="textFieldLastnameNewBook" layoutX="40.0" layoutY="40.0" prefHeight="25.0" prefWidth="174.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0" />
+                  <DatePicker fx:id="textFieldDate" layoutX="425.0" layoutY="65.0" prefHeight="25.0" prefWidth="174.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+                  <Button fx:id="buttonEnterNewBook" defaultButton="true" mnemonicParsing="false" onAction="#enterNewBook" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneLoan" layoutX="20.0" layoutY="20.0" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Enter ISBN" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <Label layoutX="10.0" layoutY="10.0" text="Enter patron ID" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                  <TextField fx:id="textFieldIsbnLoan" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.topAnchor="0.0" />
+                  <TextField fx:id="textFieldPatronIdLoan" layoutX="20.0" layoutY="20.0" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.topAnchor="30.0" />
+                  <Button fx:id="buttonEnterLoan" defaultButton="true" mnemonicParsing="false" onAction="#enterLoan" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneReturn" layoutX="30.0" layoutY="30.0" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Enter ISBN" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <TextField fx:id="textFieldIsbnReturn" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+                  <Button fx:id="buttonEnterReturn" defaultButton="true" mnemonicParsing="false" onAction="#enterReturn" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneRenew" layoutX="40.0" layoutY="40.0" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Enter patron ID" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <TextField fx:id="textFieldPatronIdRenew" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+                  <Button fx:id="buttonEnterRenew" defaultButton="true" mnemonicParsing="false" onAction="#enterRenew" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneRecommend" layoutX="50.0" layoutY="50.0" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label text="Enter patron ID" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <TextField fx:id="textFieldPatronIdRecommend" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
+                  <Button fx:id="buttonEnterRecommend" defaultButton="true" mnemonicParsing="false" onAction="#enterRecommend" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <TableView fx:id="table" layoutY="85.0" prefHeight="265.0" prefWidth="255.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="125.0">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+      		<Button fx:id="buttonExit" layoutX="65.0" mnemonicParsing="false" onAction="#exit" text="Exit" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <Button fx:id="buttonBack" layoutX="2.0" layoutY="359.0" mnemonicParsing="false" onAction="#back" text="Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+      		<Button fx:id="buttonDisconnect" layoutX="57.0" layoutY="358.0" mnemonicParsing="false" onMouseClicked="#disconnect" text="Disconnect" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="60.0" />
+         </children>
+      </AnchorPane>
+	</children>
+</AnchorPane>
