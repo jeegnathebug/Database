@@ -71,6 +71,18 @@ public class DatabaseConnector {
 		}
 	}
 
+	public Statement createStatement() {
+		try {
+			return conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+			System.out.println("An error occurred while creating statement");
+			return null;
+		}
+	}
+
 	/**
 	 * Gets results from an executed SQL statement. If the statement does not
 	 * return anything, null will be returns. If the statement cannot be

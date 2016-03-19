@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import library.LibraryDatabase;
+import library.*;
 
 public class Library extends Application {
 
@@ -17,11 +17,14 @@ public class Library extends Application {
 	public static Stage primaryStage;
 
 	private static FXMLLoader loader;
+	
 	protected static DatabaseConnector db = null;
-	static LibraryDatabase ldb;
+	protected static LibraryDatabase ldb;
+	protected static LibrarySecurity ls;
 
 	public static void main(String[] args) {
 		ldb = new LibraryDatabase();
+		ls = new LibrarySecurity();
 		launch(args);
 	}
 
@@ -32,7 +35,7 @@ public class Library extends Application {
 	 * @param resource
 	 *            The fxml document
 	 * @param stylesheet
-	 *            The styl esheet
+	 *            The style sheet
 	 */
 	public void setScene(String resource, String stylesheet) {
 

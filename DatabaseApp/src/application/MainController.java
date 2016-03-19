@@ -42,6 +42,7 @@ public class MainController extends Library {
 	public Button buttonReturn;
 	public Button buttonRenew;
 	public Button buttonRecommend;
+	public Button buttonNewUser;
 
 	public AnchorPane paneGetBook;
 	public TextField textFieldIsbnGetBook;
@@ -82,6 +83,11 @@ public class MainController extends Library {
 	public TextField textFieldPatronIdRecommend;
 	public Button buttonEnterRecommend;
 
+	public AnchorPane paneNewUser;
+	public TextField textFieldUsername;
+	public TextField textFieldPassword;
+	public Button buttonEnterNewUser;
+
 	public Button buttonExit;
 	public Button buttonBack;
 	public Button buttonDisconnect;
@@ -97,6 +103,7 @@ public class MainController extends Library {
 		paneReturn.setVisible(false);
 		paneRenew.setVisible(false);
 		paneRecommend.setVisible(false);
+		paneNewUser.setVisible(false);
 
 		paneChoice.setVisible(true);
 	}
@@ -138,6 +145,11 @@ public class MainController extends Library {
 
 	public void choiceRecommend() {
 		paneRecommend.setVisible(true);
+		paneChoice.setVisible(false);
+	}
+
+	public void choiceNewUser() {
+		paneNewUser.setVisible(true);
 		paneChoice.setVisible(false);
 	}
 
@@ -227,28 +239,93 @@ public class MainController extends Library {
 
 	public void enterLoan() {
 		int isbn = Integer.parseInt(textFieldIsbnLoan.getText());
+		
+		Book b = null;
+		ResultSet rs = db.executeStatement(
+				"SELECT isbn, book_title, publication_date, genre_name "
+				+ "FROM book INNER JOIN genre ON genre=genre_id "
+				+ "WHERE isbn=" + isbn + ";");
+		try {
+			rs.next();
+			
+			b = new Book(isbn, rs.getString(2), rs.getDate(3), rs.getString(4));
+		} catch (SQLException e) {
+			System.out.println("An error occurred while getting Book");
+		}
+		
+		Patron p = null;
 		int patronId = Integer.parseInt(textFieldPatronIdLoan.getText());
-
-		ldb.loan(new Book(isbn, null, null, null), new Patron(patronId, null, null, null));
+		rs = db.executeStatement("SELECT * FROM patron WHERE patron_id=" + patronId + ";");
+		try {
+			rs.next();
+			
+			p = new Patron(patronId, rs.getString(2), rs.getString(3), rs.getString(5));
+			p.setFees(rs.getInt(4));
+		} catch (SQLException e) {
+			System.out.println("An error occurred while getting Patron");
+		}
+		
+		ldb.loan(b, p);
 	}
 
 	public void enterReturn() {
 		int isbn = Integer.parseInt(textFieldIsbnReturn.getText());
-		ldb.returnBook(new Book(isbn, null, null, null));
+		
+		ResultSet rs = db.executeStatement(
+				"SELECT isbn, book_title, publication_date, genre_name "
+				+ "FROM book INNER JOIN genre ON genre=genre_id "
+				+ "WHERE isbn=" + isbn + ";");
+		try {
+			rs.next();
+			Book b = new Book(isbn, rs.getString(2), rs.getDate(3), rs.getString(4));
+			ldb.returnBook(b);
+		} catch (SQLException e) {
+			System.out.println("An error occurred while getting Book");
+		}
 	}
 
 	public void enterRenew() {
 		int patronId = Integer.parseInt(textFieldPatronIdRenew.getText());
-		ldb.renewBooks(new Patron(patronId, null, null, null));
+
+		ResultSet rs = db.executeStatement("SELECT * FROM patron WHERE patron_id=" + patronId + ";");
+		try {
+			rs.next();
+			Patron p = new Patron(patronId, rs.getString(2), rs.getString(3), rs.getString(5));
+			p.setFees(rs.getInt(4));
+			ldb.renewBooks(p);
+		} catch (SQLException e) {
+			System.out.println("An error occurred while getting Patron");
+		}
 	}
 
 	public void enterRecommend() {
 		int patronId = Integer.parseInt(textFieldPatronIdRecommend.getText());
+		
+		Patron p = null;
+		ResultSet rs = db.executeStatement("SELECT * FROM patron WHERE patron_id=" + patronId + ";");
 		try {
-			displayResults(ldb.recommendBook(new Patron(patronId, null, null, null)));
+			rs.next();
+			p = new Patron(patronId, rs.getString(2), rs.getString(3), rs.getString(5));
+			p.setFees(rs.getInt(4));
 		} catch (SQLException e) {
-			System.out.println("An error occured");
+			System.out.println("An error occurred while getting Patron");
 		}
+		
+		try {
+			displayResults(ldb.recommendBook(p));
+		} catch (SQLException e) {
+			System.out.println("An error occurred");
+		}
+	}
+
+	public void enterNewUser() {
+		String username = textFieldUsername.getText().trim();
+		String password = textFieldPassword.getText().trim();
+		if (username.equals("") || password.equals("")) {
+			return;
+		}
+
+		ls.newUser(username, password);
 	}
 
 	public void exit() {
@@ -280,6 +357,9 @@ public class MainController extends Library {
 		textFieldPatronIdRenew.setText(null);
 		// recommend
 		textFieldPatronIdRecommend.setText(null);
+		// newUser
+		textFieldUsername.setText(null);
+		textFieldPassword.setText(null);
 
 		// table
 		table.getColumns().clear();
@@ -301,7 +381,7 @@ public class MainController extends Library {
 		if (rs == null) {
 			return;
 		}
-		
+
 		int size = table.getColumns().size();
 
 		// clear previous table
@@ -329,11 +409,11 @@ public class MainController extends Library {
 				// Create column
 				col = new TableColumn<ObservableList<String>, String>(name);
 				col.setCellValueFactory(
-						new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>()
-							{
-							public ObservableValue<String> call(CellDataFeatures<ObservableList<String>, String> param) {
-								if (param.getValue().get(j) != null){
-								return new SimpleStringProperty(param.getValue().get(j).toString());
+						new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
+							public ObservableValue<String> call(
+									CellDataFeatures<ObservableList<String>, String> param) {
+								if (param.getValue().get(j) != null) {
+									return new SimpleStringProperty(param.getValue().get(j).toString());
 								} else {
 									return new SimpleStringProperty("Null");
 								}
@@ -359,7 +439,7 @@ public class MainController extends Library {
 					} catch (NullPointerException e) {
 					}
 				}
-				//System.out.println(row);
+				// System.out.println(row);
 
 				data.add(row);
 			}

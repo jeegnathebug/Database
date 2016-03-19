@@ -26,14 +26,14 @@ public class LoginController extends Library {
 		try {
 			// Create connection
 			getConnection(url.orElse("localhost:3306"), username, password);
-			
 			// Next screen
 			next(true, "Main.fxml", "application.css");
-			
+
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
+			System.out.println("An error occured while connecting to database");
 		}
 	}
 

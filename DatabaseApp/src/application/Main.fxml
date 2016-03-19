@@ -45,26 +45,52 @@
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="buttonGetBook" mnemonicParsing="false" onAction="#choiceGetBook" prefWidth="250.0" text="Get Book">
+                  <Button fx:id="buttonGetBook" mnemonicParsing="false" onAction="#choiceGetBook" prefWidth="200.0" text="Get Book">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="buttonBookReport" mnemonicParsing="false" onAction="#choiceBookReport" prefWidth="250.0" text="Book Report" GridPane.rowIndex="1" />
-                  <Button fx:id="buttonNewPatron" mnemonicParsing="false" onAction="#choiceNewPatron" prefWidth="250.0" text="New Patron" GridPane.rowIndex="2" />
-                  <Button fx:id="buttonNewBook" mnemonicParsing="false" onAction="#choiceNewBook" prefWidth="250.0" text="New Book" GridPane.rowIndex="3" />
-                  <Button fx:id="buttonLoan" mnemonicParsing="false" onAction="#choiceLoan" prefWidth="250.0" text="Loan" GridPane.columnIndex="1" />
-                  <Button fx:id="buttonReturn" mnemonicParsing="false" onAction="#choiceReturn" prefWidth="250.0" text="Return" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Button fx:id="buttonRenew" mnemonicParsing="false" onAction="#choiceRenew" prefWidth="250.0" text="Renew" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Button fx:id="buttonRecommend" mnemonicParsing="false" onAction="#choiceRecommend" prefWidth="250.0" text="Recommend" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button fx:id="buttonBookReport" mnemonicParsing="false" onAction="#choiceBookReport" prefWidth="200.0" text="Book Report" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonNewPatron" mnemonicParsing="false" onAction="#choiceNewPatron" prefWidth="200.0" text="New Patron" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonNewBook" mnemonicParsing="false" onAction="#choiceNewBook" prefWidth="200.0" text="New Book" GridPane.columnIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonLoan" mnemonicParsing="false" onAction="#choiceLoan" prefWidth="200.0" text="Loan" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonReturn" mnemonicParsing="false" onAction="#choiceReturn" prefWidth="200.0" text="Return" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonRenew" mnemonicParsing="false" onAction="#choiceRenew" prefWidth="200.0" text="Renew" GridPane.columnIndex="2">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonRecommend" mnemonicParsing="false" onAction="#choiceRecommend" prefWidth="200.0" text="Recommend" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Button>
+                  <Button fx:id="buttonNewUser" mnemonicParsing="false" onAction="#choiceNewUser" prefWidth="200.0" text="New User" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Button>
                </children>
             </GridPane>
             <AnchorPane fx:id="paneGetBook" prefHeight="117.0" prefWidth="600.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -135,6 +161,15 @@
                   <Label text="Enter patron ID" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
                   <TextField fx:id="textFieldPatronIdRecommend" prefHeight="25.0" prefWidth="417.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="0.0" />
                   <Button fx:id="buttonEnterRecommend" defaultButton="true" mnemonicParsing="false" onAction="#enterRecommend" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="paneNewUser" prefHeight="117.0" prefWidth="630.0" visible="false" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label layoutX="41.0" layoutY="59.0" text="Enter username" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0" />
+                  <Label layoutX="41.0" layoutY="29.0" text="Enter password" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                  <TextField fx:id="textFieldUsername" layoutX="131.0" layoutY="2.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="135.0" AnchorPane.topAnchor="0.0" />
+                  <TextField fx:id="textFieldPassword" layoutX="115.0" layoutY="32.0" prefHeight="25.0" prefWidth="380.0" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="135.0" AnchorPane.topAnchor="30.0" />
+                  <Button fx:id="buttonEnterNewUser" defaultButton="true" layoutX="568.0" layoutY="91.0" mnemonicParsing="false" onAction="#enterNewUser" text="Enter" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
             <TableView fx:id="table" layoutY="85.0" prefHeight="265.0" prefWidth="255.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="125.0">

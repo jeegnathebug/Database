@@ -12,55 +12,110 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import application.Library;
-import connector.DatabaseConnector;
 
 public class LibrarySecurity extends Library {
 
 	private static SecureRandom random = new SecureRandom();
 
-	private DatabaseConnector db;
+	/**
+	 * Creates an account for a given user name. If the user name already
+	 * exists, or is not a valid user name, nothing will happen. Invalid user
+	 * names include empty strings and null values
+	 * 
+	 * @param username
+	 *            The user name
+	 * @param password
+	 *            The password
+	 */
+	public void newUser(String username, String password) {
 
-	private String dbuser = "<YOURUSERNAME>";
-	private String dbname = "<YOURDBNAME>";
-	private String dbpassword = "<YOURDBPASSWORD>";
+		if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
+			System.out.println("Username or password cannot be null");
+			return;
+		}
 
-	// Takes a username and password and creates and account for that user
-	public void newUser(String username, String password) throws SQLException {
+		if (!login(username, password)) {
+			PreparedStatement stmt = db.prepareStatement("INSERT INTO users VALUES (?, ?, ?);");
 
-		PreparedStatement stmt = db.prepareStatement("INSERT INTO users VALUES (?, ?, ?);");
-		
-		String salt = getSalt();
-		stmt.setString(1, username);
-		stmt.setString(2, salt);
-		stmt.setBytes(3, hash(password, salt));
-		
-		db.executeStatement(stmt);
+			String salt = getSalt();
+			
+			try {
+				stmt.setString(1, username);
+				stmt.setString(2, salt);
+				stmt.setBytes(3, hash(password, salt));
+			} catch (SQLException e) {
+			}
+
+			try {
+				db.executeUpdateStatement(stmt);
+				System.out.println("Successfully added user " + username);
+			} catch (SQLException e) {
+				System.out.println("SQLException: " + e.getMessage());
+				System.out.println("SQLState: " + e.getSQLState());
+				System.out.println("VendorError: " + e.getErrorCode());
+				System.out.println("An error occured while updating table");
+			}
+		}
 	}
 
-	// Prompts the user to input a username and password, and creates an account
-	// for that user.
-	public void newUser() throws SQLException {
+	/**
+	 * Checks whether an account exists for the given user name
+	 * 
+	 * @param username
+	 *            The user name to be checked
+	 * @param password
+	 *            The password of the user
+	 * @return True if the user name belongs to a valid user
+	 */
+	public boolean login(String username, String password) {
+		if (username == null || username.trim().equals("")) {
+			System.out.println("Username cannot be null");
+			return false;
+		}
 
+		boolean exists = false;
+
+		// Create statement
+		PreparedStatement stmt = db.prepareStatement("SELECT * FROM users WHERE userid=?;");
+		try {
+			stmt.setString(1, username);
+		} catch (SQLException e) {
+		}
+
+		// Execute statement
+		ResultSet rs = db.executeStatement(stmt);
+
+		// Check for existing user name
+		try {
+			if (rs.next()) {
+				exists = true;
+			}
+		} catch (SQLException e) {
+
+			System.out.println("An error occured while checking current users");
+		}
+
+		return exists;
 	}
 
-	// Takes a username and password returns true if they belong to a valid user
-	public boolean login(String username, String password) throws SQLException {
-		return false;
-	}
-
-	// Prompts the user to input their login info, returns true if they are a
-	// valid user, false otherwise
-	public boolean login() throws SQLException {
-		return false;
-	}
-
-	// Creates a randomly generated String
+	/**
+	 * Generates a random {@code String}
+	 * 
+	 * @return The randomly generated {@code String}
+	 */
 	public String getSalt() {
 		return new BigInteger(140, random).toString(32);
 	}
 
-	// Takes a password and a salt a performs a one way hashing on them,
-	// returning an array of bytes.
+	/**
+	 * Creates a hash from the given password and salt
+	 * 
+	 * @param password
+	 *            The password to be used in the hash
+	 * @param salt
+	 *            The salt to be used in the hash
+	 * @return The has
+	 */
 	public byte[] hash(String password, String salt) {
 		try {
 			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
