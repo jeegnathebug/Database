@@ -22,10 +22,6 @@ public class LoginController extends Library {
 		Optional<String> url = Optional.ofNullable(textFieldURL.getText());
 		String username = textFieldUsername.getText();
 		String password = textFieldPassword.getText();
-		
-		url = Optional.of("waldo2.dawsoncollege.qc.ca/cs1430196");
-		username = "CS1430196";
-		password = "truskimp";
 
 		try {
 			// Create connection
