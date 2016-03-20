@@ -7,8 +7,6 @@ import application.Library;
 import business.Book;
 import business.Patron;
 
-import java.util.ArrayList;
-
 public class LibraryDatabase extends Library {
 
 	/**
@@ -22,7 +20,8 @@ public class LibraryDatabase extends Library {
 	public ResultSet getBook(int isbn) {
 		PreparedStatement stmt = db.prepareStatement(
 				"SELECT isbn AS 'ISBN', book_title AS 'Title', publication_date AS 'Publication Date', genre_name AS 'Genre' "
-						+ "FROM book INNER JOIN genre ON genre = genre_id " + "WHERE isbn=?;");
+				+ "FROM book INNER JOIN genre ON genre = genre_id "
+				+ "WHERE isbn=?;");
 		try {
 			stmt.setInt(1, isbn);
 		} catch (SQLException e) {
@@ -41,13 +40,13 @@ public class LibraryDatabase extends Library {
 	 */
 	public ResultSet bookReport() {
 
-		String stmt =
+		PreparedStatement stmt = db.prepareStatement(
 				"SELECT isbn AS 'ISBN', book_title AS 'Title', publication_date AS 'Publication Date', genre_name AS 'Genre', firstname AS 'Firstname', lastname AS 'Lastname' "
 				+ "FROM book "
 				+ "INNER JOIN genre ON book.genre = genre.genre_id "
 				+ "INNER JOIN book_authors ON isbn = book "
 				+ "INNER JOIN author ON author = author_id "
-				+ "ORDER BY isbn;";
+				+ "ORDER BY isbn;");
 
 		return db.executeStatement(stmt);
 	}
@@ -62,10 +61,10 @@ public class LibraryDatabase extends Library {
 	 *            The last name of the patron
 	 * @param email
 	 *            The email of the patron. Not required
-	 * @return A {@code ResultSet} object containing all the patrons including
-	 *         the newly added
+	 * @return True if the patron was added, false otherwise.
 	 */
-	public ResultSet newPatron(String firstname, String lastname, String email) {
+	public boolean newPatron(String firstname, String lastname, String email) {
+		PreparedStatement stmt;
 		ResultSet rs = null;
 		int patronId = -1;
 
@@ -81,20 +80,19 @@ public class LibraryDatabase extends Library {
 			System.out.println("An error occured while getting Patron ID");
 		}
 
-		PreparedStatement stmt = db.prepareStatement(
-						"SELECT firstname, lastname "
+		stmt = db.prepareStatement(
+						"SELECT firstname, lastname, email "
 						+ "FROM patron "
 						+ "WHERE firstname=? AND lastname=?;");
 
 		// Check if patron already exists
-		boolean exists = false;
 		try {
 			stmt.setString(1, firstname);
 			stmt.setString(2, lastname);
 			rs = db.executeStatement(stmt);
 			if (rs.next()) {
 				System.out.println("Patron already exists");
-				exists = true;
+				return false;
 			}
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
@@ -104,30 +102,26 @@ public class LibraryDatabase extends Library {
 		}
 
 		// Patron does not exist
-		if (!exists) {
-			stmt = db.prepareStatement("INSERT INTO patron VALUES (?, ?, ?, 0, ?);");
-			try {
-				stmt.setInt(1, patronId);
-				stmt.setString(2, firstname);
-				stmt.setString(3, lastname);
-				stmt.setString(4, email);
-			} catch (SQLException e) {
-			}
-
-			try {
-				db.executeUpdateStatement(stmt);
-				System.out.println("Successfully added " + lastname + ", " + firstname);
-			} catch (SQLException e) {
-				System.out.println("SQLException: " + e.getMessage());
-				System.out.println("SQLState: " + e.getSQLState());
-				System.out.println("VendorError: " + e.getErrorCode());
-				System.out.println("An error occured while adding patron");
-			}
+		stmt = db.prepareStatement("INSERT INTO patron VALUES (?, ?, ?, 0, ?);");
+		try {
+			stmt.setInt(1, patronId);
+			stmt.setString(2, firstname);
+			stmt.setString(3, lastname);
+			stmt.setString(4, email);
+		} catch (SQLException e) {
 		}
 
-		return db.executeStatement(
-				"SELECT firstname AS 'Firstname', lastname AS 'Lastname', fees AS 'Fees', email AS 'Email'"
-				+ "FROM patron;");
+		try {
+			db.executeUpdateStatement(stmt);
+			System.out.println("Successfully added " + lastname + ", " + firstname);
+			return true;
+		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+			System.out.println("An error occured while adding patron");
+			return false;
+		}
 	}
 
 	/**
@@ -305,9 +299,11 @@ public class LibraryDatabase extends Library {
 			System.out.println("An error occured while adding the book_author");
 		}
 
-		return db.executeStatement(
+		stmt = db.prepareStatement(
 				"SELECT isbn AS 'ISBN', book_title AS 'Title', publication_date AS 'Publication Date', genre_name AS 'Genre' "
-						+ "FROM book " + "INNER JOIN genre ON genre=genre_id;");
+						+ "FROM book "
+						+ "INNER JOIN genre ON genre=genre_id;");
+		return db.executeStatement(stmt);
 	}
 
 	/**
@@ -318,8 +314,9 @@ public class LibraryDatabase extends Library {
 	 *            The {@code Book} to be loaned out
 	 * @param patron
 	 *            The {@code Patron} to whom the {@code Book} will be loaned
+	 * @return True if the loan was successfully added. False otherwise
 	 */
-	public void loan(Book book, Patron patron) {
+	public boolean loan(Book book, Patron patron) {
 		int loanId = -1;
 
 		// Get loan id
@@ -350,11 +347,13 @@ public class LibraryDatabase extends Library {
 		try {
 			db.executeUpdateStatement(stmt);
 			System.out.println("Successfully added loan");
+			return true;
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("An error occured while executing statement");
+			return false;
 		}
 	}
 
@@ -364,18 +363,22 @@ public class LibraryDatabase extends Library {
 	 * 
 	 * @param book
 	 *            The {@code Book} that has been returned
+	 * @return True if the book was successfully returned and the fees where
+	 *         successfully applied. False otherwise
 	 */
-	public void returnBook(Book book) {
+	public boolean returnBook(Book book) {
 
 		PreparedStatement stmt = db.prepareStatement(
 				"UPDATE book_loan SET returned=1 "
 				+ "WHERE book=? AND returned=0;");
+		
 		try {
 			stmt.setInt(1, book.getIsbn());
 			db.executeUpdateStatement(stmt);
 			System.out.println("Successfully returned book");
 		} catch (SQLException e) {
 			System.out.println("An error occured while returning book");
+			return false;
 		}
 
 		int fees = assessFees(book);
@@ -395,10 +398,11 @@ public class LibraryDatabase extends Library {
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("An error occured while fetching the Patron ID");
+			return false;
 		}
 
 		Patron p = new Patron(id, null, null, null);
-		setFee(p, fees);
+		return setFee(p, fees);
 	}
 
 	/**
@@ -408,53 +412,59 @@ public class LibraryDatabase extends Library {
 	 *            The {@code Patron} whose books are to be renewed For full
 	 *            marks, carry out these updates by using a scrolling, updatable
 	 *            resultset.
+	 * @return True if the patrons books were renewed. False otherwise
 	 */
-	public void renewBooks(Patron patron) {
+	public boolean renewBooks(Patron patron) {
 
-		ArrayList<Book> books = new ArrayList<Book>();
-
-		Statement stmt = db.createStatement();
 		ResultSet rs = null;
+		PreparedStatement stmt = db.prepareStatement(
+				"SELECT * "
+				+ "FROM book_loan "
+				+ "WHERE returned=0 AND patron_id=?;");
+
 		try {
-			rs = stmt.executeQuery("SELECT * FROM book_loan WHERE returned=0 AND patron_id=" + patron.getPatronId() + ";");
+			stmt.setInt(1, patron.getPatronId());
+			rs = db.executeStatement(stmt);
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("An error occurred while executing statement");
-		}
-		
-		try {
-			while (rs.next()) {
-				books.add(new Book(rs.getInt(3), null, null, null));
-			}
-		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
-			System.out.println("An error occured while fetching book data");
+			return false;
 		}
 
-		int index = 0;
 		try {
+			if (rs == null || !rs.next()) {
+				return false;
+			}
+			
 			rs.beforeFirst();
 			while (rs.next()) {
+				// Get book
+				Book book = null;
+				try {
+					book = new Book(rs.getInt(3), null, null, null);
+				} catch (SQLException e) {
+				}
+				
 				// Set fees
-				int fees = assessFees(books.get(index));
-				index++;
+				int fees = assessFees(book);
 				setFee(patron, fees);
 
 				// Set return date
 				rs.updateDate(4, Date.valueOf(LocalDate.now().plusWeeks(2)));
-				
+
 				// Finalize
 				rs.updateRow();
 			}
+			return true;
+			
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("An error occured while renewing the books");
+			return false;
 		}
 	}
 
@@ -467,7 +477,7 @@ public class LibraryDatabase extends Library {
 	 */
 	public ResultSet recommendBook(Patron patron) {
 		if (patron == null) {
-			throw new NullPointerException("Patron cannot be null");
+			return null;
 		}
 
 		ResultSet rs = null;
@@ -507,9 +517,12 @@ public class LibraryDatabase extends Library {
 		LocalDate now = LocalDate.now();
 
 		// Check date overdue
+		PreparedStatement stmt = db.prepareStatement("SELECT due_date FROM book_loan WHERE book=?;");
 		ResultSet rs = null;
+
 		try {
-			rs = db.executeStatement("SELECT due_date FROM book_loan WHERE book=" + book.getIsbn() + ";");
+			stmt.setInt(1, book.getIsbn());
+			rs = db.executeStatement(stmt);
 			rs.next();
 			dueDate = rs.getDate(1).toLocalDate();
 		} catch (SQLException e) {
@@ -539,25 +552,25 @@ public class LibraryDatabase extends Library {
 		return fees;
 	}
 
-	private void setFee(Patron patron, int fees) {
+	private boolean setFee(Patron patron, int fees) {
 		fees += patron.getFees();
 
 		// Update fee
-		PreparedStatement stmt = db.prepareStatement(
-				"UPDATE patron SET fees=? "
-				+ "WHERE patron_id=?;");
+		PreparedStatement stmt = db.prepareStatement("UPDATE patron SET fees=? WHERE patron_id=?;");
 		try {
 			stmt.setInt(1, fees);
 			stmt.setInt(2, patron.getPatronId());
-			
+
 			db.executeUpdateStatement(stmt);
-			
+
 			System.out.println("Successfully added fee of " + fees);
+			return true;
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("An error occured while setting fees");
+			return false;
 		}
 	}
 }

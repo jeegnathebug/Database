@@ -29,6 +29,7 @@ public class DatabaseConnector {
 	 * @param password
 	 *            The password to be used to access the database
 	 * @throws SQLException
+	 *             If a database connection error occurs
 	 */
 	public DatabaseConnector(String url, String user, String password) throws SQLException {
 
@@ -58,28 +59,14 @@ public class DatabaseConnector {
 	/**
 	 * Closes connection to database
 	 */
-	public void closeConnection() {
+	public void closeConnection() throws SQLException {
 		System.out.println("\nClosing connection...");
 		try {
 			conn.close();
 			System.out.println("Connection closed successfully");
 		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("Connection could not be closed successfully");
-		}
-	}
-
-	public Statement createStatement() {
-		try {
-			return conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
-			System.out.println("An error occurred while creating statement");
-			return null;
+			throw e;
 		}
 	}
 
@@ -172,11 +159,10 @@ public class DatabaseConnector {
 	public PreparedStatement prepareStatement(String sql) {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement(sql);
+			stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		} catch (SQLException e) {
 			System.out.println("An error occured with the prepared statement");
 		}
-
 		return stmt;
 	}
 }

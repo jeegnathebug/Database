@@ -2,9 +2,10 @@ package library;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 import javax.crypto.SecretKey;
@@ -26,19 +27,20 @@ public class LibrarySecurity extends Library {
 	 *            The user name
 	 * @param password
 	 *            The password
+	 * @return True if the user was added to the database. False otherwise
 	 */
-	public void newUser(String username, String password) {
-
+	public boolean newUser(String username, String password) {
 		if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
 			System.out.println("Username or password cannot be null");
-			return;
+			return false;
 		}
 
+		// User does not exist
 		if (!login(username, password)) {
 			PreparedStatement stmt = db.prepareStatement("INSERT INTO users VALUES (?, ?, ?);");
 
 			String salt = getSalt();
-			
+
 			try {
 				stmt.setString(1, username);
 				stmt.setString(2, salt);
@@ -49,13 +51,17 @@ public class LibrarySecurity extends Library {
 			try {
 				db.executeUpdateStatement(stmt);
 				System.out.println("Successfully added user " + username);
+				return true;
 			} catch (SQLException e) {
 				System.out.println("SQLException: " + e.getMessage());
 				System.out.println("SQLState: " + e.getSQLState());
 				System.out.println("VendorError: " + e.getErrorCode());
 				System.out.println("An error occured while updating table");
+				return false;
 			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -65,15 +71,12 @@ public class LibrarySecurity extends Library {
 	 *            The user name to be checked
 	 * @param password
 	 *            The password of the user
-	 * @return True if the user name belongs to a valid user
+	 * @return True if the user name belongs to a valid user. False otherwise
 	 */
 	public boolean login(String username, String password) {
-		if (username == null || username.trim().equals("")) {
-			System.out.println("Username cannot be null");
+		if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
 			return false;
 		}
-
-		boolean exists = false;
 
 		// Create statement
 		PreparedStatement stmt = db.prepareStatement("SELECT * FROM users WHERE userid=?;");
@@ -85,17 +88,34 @@ public class LibrarySecurity extends Library {
 		// Execute statement
 		ResultSet rs = db.executeStatement(stmt);
 
+		// Get salt
+		String salt;
+		try {
+			rs.next();
+			salt = rs.getString(2);
+		} catch (SQLException e) {
+			System.out.println("Could not retrieve salt");
+			return false;
+		}
+
 		// Check for existing user name
 		try {
-			if (rs.next()) {
-				exists = true;
-			}
-		} catch (SQLException e) {
+			// Get hashes
+			byte[] dbHash = rs.getBytes(3);
+			byte[] inputHash = hash(password, salt);
+			boolean equal = true;
 
+			// Check equality of hashes
+			for (int i = 0; i < inputHash.length; i++) {
+				equal &= inputHash[i] == dbHash[i];
+			}
+
+			return equal;
+		} catch (SQLException e) {
 			System.out.println("An error occured while checking current users");
 		}
 
-		return exists;
+		return false;
 	}
 
 	/**
