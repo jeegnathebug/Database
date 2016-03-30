@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseConnector {
 
@@ -99,7 +98,7 @@ public class DatabaseConnector {
 	 *            The MySQL statement to be queried
 	 * @return The {@code ResultSet} of the executed statement
 	 */
-	public ResultSet executeStatement(Statement statement) {
+	public ResultSet executeStatement(PreparedStatement statement) {
 
 		if (statement == null || statement.equals("")) {
 			return null;
@@ -108,18 +107,13 @@ public class DatabaseConnector {
 		ResultSet rs = null;
 
 		try {
-			if (statement instanceof PreparedStatement) {
-				rs = ((PreparedStatement) statement).executeQuery();
-			} else {
-				rs = statement.getResultSet();
-			}
+			rs = statement.executeQuery();
 		} catch (SQLException e) {
 			System.out.println("SQLException: " + e.getMessage());
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("Query could not be executed successfully");
 		}
-
 		return rs;
 	}
 

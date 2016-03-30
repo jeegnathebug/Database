@@ -4,9 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.Arrays;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -103,12 +102,10 @@ public class LibrarySecurity extends Library {
 			// Get hashes
 			byte[] dbHash = rs.getBytes(3);
 			byte[] inputHash = hash(password, salt);
-			boolean equal = true;
+			boolean equal;
 
 			// Check equality of hashes
-			for (int i = 0; i < inputHash.length; i++) {
-				equal &= inputHash[i] == dbHash[i];
-			}
+			equal = Arrays.equals(dbHash, inputHash);
 
 			return equal;
 		} catch (SQLException e) {
