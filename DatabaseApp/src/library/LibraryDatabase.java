@@ -159,61 +159,9 @@ public class LibraryDatabase extends Library {
 				}
 			}
 		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("An error occured while checking authors");
 		}
-
-		// Check genre
-		String genre = book.getGenre();
-		int genreId = -1;
-
-		try {
-			rs = db.executeStatement("SELECT * FROM genre;");
-
-			while (rs.next()) {
-				if (rs.getString(2).equalsIgnoreCase(genre)) {
-					genreId = rs.getInt(1);
-					genre = rs.getString(2);
-					break;
-				}
-			}
-		} catch (SQLException e) {
-			System.out.println("An error occured while checking genres");
-		}
-
-		// Genre does not exist
-		if (genreId == -1) {
-			try {
-				rs = db.executeStatement("SELECT COUNT(genre_id) FROM genre;");
-				rs.next();
-				genreId = rs.getInt(1) + 1;
-			} catch (SQLException e) {
-				System.out.println("SQLException: " + e.getMessage());
-				System.out.println("SQLState: " + e.getSQLState());
-				System.out.println("VendorError: " + e.getErrorCode());
-				System.out.println("An error occured");
-			}
-
-			stmt = db.prepareStatement("INSERT INTO genre VALUES (?, ?);");
-			try {
-				stmt.setInt(1, genreId);
-				stmt.setString(2, genre);
-			} catch (SQLException e) {
-			}
-
-			// Add new genre to database
-			try {
-				db.executeUpdateStatement(stmt);
-			} catch (SQLException e) {
-				System.out.println("SQLException: " + e.getMessage());
-				System.out.println("SQLState: " + e.getSQLState());
-				System.out.println("VendorError: " + e.getErrorCode());
-				System.out.println("An error occured while adding the author");
-			}
-		}
-
+		
 		// Author does not exist
 		if (!aExists) {
 			stmt = db.prepareStatement("INSERT INTO author VALUES (?, ?, ?);");
@@ -237,6 +185,48 @@ public class LibraryDatabase extends Library {
 			}
 		}
 
+		// Check genre
+		String genre = book.getGenre();
+		boolean gExists = false;
+		int genreId = -1;
+
+		try {
+			rs = db.executeStatement("SELECT * FROM genre;");
+
+			while (rs.next()) {
+				genreId = rs.getInt(1) + 1;
+				if (rs.getString(2).equalsIgnoreCase(genre)) {
+					gExists = true;
+					genreId = rs.getInt(1);
+					genre = rs.getString(2);
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("An error occured while checking genres");
+		}
+
+		// Genre does not exist
+		if (!gExists) {
+
+			stmt = db.prepareStatement("INSERT INTO genre VALUES (?, ?);");
+			try {
+				stmt.setInt(1, genreId);
+				stmt.setString(2, genre);
+			} catch (SQLException e) {
+			}
+
+			// Add new genre to database
+			try {
+				db.executeUpdateStatement(stmt);
+			} catch (SQLException e) {
+				System.out.println("SQLException: " + e.getMessage());
+				System.out.println("SQLState: " + e.getSQLState());
+				System.out.println("VendorError: " + e.getErrorCode());
+				System.out.println("An error occured while adding the genre");
+			}
+		}
+
 		Date date = book.getPubDate();
 
 		// Insert book
@@ -251,9 +241,10 @@ public class LibraryDatabase extends Library {
 				stmt.setDate(3, date);
 			}
 			stmt.setInt(4, genreId);
-		} catch (SQLException e) { // Should never happen
-			System.out.println("An error occurred while updating statement");
+			
+		} catch (SQLException e) {
 		}
+		
 		// Add to database
 		try {
 			db.executeUpdateStatement(stmt);
@@ -265,15 +256,15 @@ public class LibraryDatabase extends Library {
 			System.out.println("An error occured while adding the book");
 		}
 
-		// Insert book author
+		// Insert book_author
 		stmt = db.prepareStatement("INSERT INTO book_authors VALUES (?, ?);");
 
 		try {
 			stmt.setInt(1, authorId);
 			stmt.setInt(2, isbn);
-		} catch (SQLException e) { // Should never happen
-			System.out.println("An error occurred while updating statement");
+		} catch (SQLException e) {
 		}
+		
 		// Add to database
 		try {
 			db.executeUpdateStatement(stmt);

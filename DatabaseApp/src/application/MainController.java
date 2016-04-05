@@ -570,5 +570,8 @@ public class MainController extends Library {
 			}
 			table.setItems(data);
 		}
+		
+		// Close ResultSet
+		rs.close();
 	}
 }

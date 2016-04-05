@@ -59,8 +59,8 @@ public class DatabaseConnector {
 	 * Closes connection to database
 	 */
 	public void closeConnection() throws SQLException {
-		System.out.println("\nClosing connection...");
 		try {
+			System.out.println("\nClosing connection...");
 			conn.close();
 			System.out.println("Connection closed successfully");
 		} catch (SQLException e) {
@@ -114,6 +114,7 @@ public class DatabaseConnector {
 			System.out.println("VendorError: " + e.getErrorCode());
 			System.out.println("Query could not be executed successfully");
 		}
+
 		return rs;
 	}
 
@@ -143,12 +144,12 @@ public class DatabaseConnector {
 	}
 
 	/**
-	 * Returns a prepared statement from the give {@code String}. Returns null
+	 * Returns a prepared statement from the given {@code String}. Returns null
 	 * if the statement cannot be prepared.
 	 * 
 	 * @param sql
 	 *            The statement to be prepared
-	 * @return The {@code PreparedStatement}
+	 * @return The updatable, scroll sensitive {@code PreparedStatement}
 	 */
 	public PreparedStatement prepareStatement(String sql) {
 		PreparedStatement stmt = null;
