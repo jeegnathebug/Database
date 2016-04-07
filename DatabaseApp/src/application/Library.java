@@ -71,7 +71,7 @@ public class Library extends Application {
 		// Set stage
 		Library.primaryStage = primaryStage;
 		primaryStage.setResizable(false);
-		primaryStage.getIcons().add(new Image("file:icon.png"));
+		primaryStage.getIcons().add(new Image("http://education.oracle.com/education/images/streams_web/database-stream-icon.png"));
 
 		// Say "Bye" on exit because that's adorable
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
