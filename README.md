@@ -10,3 +10,6 @@
 3. Run libraryprocedures.sql
 
   `source 'path to file'`
+
+### Library Database
+![Library Database](http://i1305.photobucket.com/albums/s547/jeegnathebug/library_zps5jr5dxdo.png?t=1460069173)
