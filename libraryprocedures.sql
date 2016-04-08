@@ -4,9 +4,12 @@ DROP PROCEDURE IF EXISTS RENEWBOOK;
 DROP PROCEDURE IF EXISTS RENEWBOOKS;
 DROP PROCEDURE IF EXISTS PAYMENT;
 DROP PROCEDURE IF EXISTS RETURNBOOK;
+DROP PROCEDURE IF EXISTS TOPREADERS;
+DROP PROCEDURE IF EXISTS PATRONPAL;
 
 DELIMITER //
 
+/* Gets the days by which a a given book is overdue */
 CREATE FUNCTION DAYSOVERDUE(isbn INT) RETURNS INT NOT DETERMINISTIC
 BEGIN
 		DECLARE due DATE;
@@ -25,11 +28,13 @@ BEGIN
         RETURN diff;
 END //
 
+/* Loans the given book to the given patron */
 CREATE PROCEDURE LOANBOOK(IN isbn INT, IN patron_id INT)
 BEGIN
 	INSERT INTO book_loan VALUES (null, patron_id, isbn, ADDDATE(CURDATE(), INTERVAL 14 DAY), 0);
 END //
 
+/* Renews the given book */
 CREATE PROCEDURE RENEWBOOK(IN isbn INT)
 BEGIN
 	DECLARE loan INT;
@@ -62,6 +67,7 @@ BEGIN
  		WHERE book=isbn;
 END //
 
+/* Renews all books of a given patron */
 CREATE PROCEDURE RENEWBOOKS(IN patron INT)
 BEGIN
 	DECLARE isbn INT DEFAULT 0;
@@ -85,6 +91,7 @@ BEGIN
 	CLOSE books;
 END //
 
+/* Allows patron to pay their fees. Returns any change the patron paid extra */
 CREATE PROCEDURE PAYMENT(INOUT payment INT, IN patron INT)
 	BEGIN
 	DECLARE amount_due INT DEFAULT 0;
@@ -107,6 +114,7 @@ CREATE PROCEDURE PAYMENT(INOUT payment INT, IN patron INT)
 	END IF;
 END //
 
+/* Returns the given book */
 CREATE PROCEDURE RETURNBOOK(IN isbn INT)
 BEGIN
 	DECLARE days INT DEFAULT 0;
@@ -130,3 +138,17 @@ BEGIN
 		SET returned=1
 		WHERE book=isbn;
 END//
+
+/* Gets the patrons with the most books read for each genre */
+CREATE PROCEDURE TOPREADERS()
+BEGIN
+	SELECT Genre, genre_name AS 'Genre', patron.patron_id AS 'Patron ID', Firstname, Lastname
+		FROM patron
+		INNER JOIN book_loan ON patron.patron_id=book_loan.patron_id
+		INNER JOIN book ON book=isbn
+		INNER JOIN genre ON genre=genre_id
+		GROUP BY genre_id, patron.patron_id
+		ORDER BY genre_id, count(patron.patron_id)
+		DESC;
+END //
+
