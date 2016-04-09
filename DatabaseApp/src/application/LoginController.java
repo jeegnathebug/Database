@@ -26,7 +26,7 @@ public class LoginController extends Library {
 		String password = textFieldPassword.getText();
 
 		// Create connection
-		getConnection(url.orElse("localhost:3306"), username, password);
+		getConnection(url.orElse("localhost:3306/library"), username, password);
 		// Next screen
 		next(true, "Main.fxml", "light.css");
 	}
