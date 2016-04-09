@@ -481,6 +481,9 @@ public class MainController extends Library {
 
 		// table
 		table.getColumns().clear();
+		
+		// label
+		labelStatus.setText(null);
 	}
 
 	public void disconnect() {

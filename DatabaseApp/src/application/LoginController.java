@@ -25,10 +25,6 @@ public class LoginController extends Library {
 		String username = textFieldUsername.getText();
 		String password = textFieldPassword.getText();
 
-		url = Optional.of("waldo2.dawsoncollege.qc.ca/cs1430196");
-		username = "CS1430196";
-		password = "truskimp";
-
 		// Create connection
 		getConnection(url.orElse("localhost:3306"), username, password);
 		// Next screen
