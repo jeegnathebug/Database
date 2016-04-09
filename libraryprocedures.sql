@@ -142,13 +142,22 @@ END//
 /* Gets the patrons with the most books read for each genre */
 CREATE PROCEDURE TOPREADERS()
 BEGIN
-	SELECT Genre, genre_name AS 'Genre', patron.patron_id AS 'Patron ID', Firstname, Lastname
-		FROM patron
-		INNER JOIN book_loan ON patron.patron_id=book_loan.patron_id
-		INNER JOIN book ON book=isbn
-		INNER JOIN genre ON genre=genre_id
-		GROUP BY genre_id, patron.patron_id
-		ORDER BY genre_id, count(patron.patron_id)
-		DESC;
+	DECLARE counter INT DEFAULT 1;
+	DECLARE genre_count INT;
+    
+	SELECT COUNT(genre_id) INTO genre_count FROM genre;
+    
+	WHILE counter <= genre_count
+	DO
+		SELECT Genre, genre_name AS 'Genre', patron.patron_id AS 'Patron ID', Firstname, Lastname
+			FROM patron
+			INNER JOIN book_loan ON patron.patron_id=book_loan.patron_id
+			INNER JOIN book ON book=isbn
+			INNER JOIN genre ON genre=genre_id
+        		WHERE genre=counter
+			GROUP BY genre_id, patron.patron_id
+			ORDER BY genre_id, count(patron.patron_id)
+			DESC LIMIT 1;
+		SET counter = counter + 1;
+	END WHILE;
 END //
-
