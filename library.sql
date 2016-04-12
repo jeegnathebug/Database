@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS book;
 DROP TABLE IF EXISTS genre;
 DROP TABLE IF EXISTS patron;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS top_readers;
 
 CREATE TABLE `author` (
   `author_id` INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -37,7 +38,6 @@ CREATE TABLE `book_authors` (
 CREATE INDEX `idx_book_authors__book` ON `book_authors` (`book`);
 
 ALTER TABLE `book_authors` ADD CONSTRAINT `fk_book_authors__author` FOREIGN KEY (`author`) REFERENCES `author` (`author_id`);
-
 ALTER TABLE `book_authors` ADD CONSTRAINT `fk_book_authors__book` FOREIGN KEY (`book`) REFERENCES `book` (`isbn`);
 
 CREATE TABLE `patron` (
@@ -57,11 +57,9 @@ CREATE TABLE `book_loan` (
 );
 
 CREATE INDEX `idx_book_loan__book` ON `book_loan` (`book`);
-
 CREATE INDEX `idx_book_loan__patron_id` ON `book_loan` (`patron_id`);
 
 ALTER TABLE `book_loan` ADD CONSTRAINT `fk_book_loan__book` FOREIGN KEY (`book`) REFERENCES `book` (`isbn`);
-
 ALTER TABLE `book_loan` ADD CONSTRAINT `fk_book_loan__patron_id` FOREIGN KEY (`patron_id`) REFERENCES `patron` (`patron_id`);
 
 CREATE TABLE `users` (
@@ -69,6 +67,14 @@ CREATE TABLE `users` (
   `salt` VARCHAR(30) NOT NULL,
   `hash` VARBINARY(256) NOT NULL
 );
+
+CREATE TABLE `top_readers` (
+  `genre_id` INT UNIQUE,
+  `patron_id` INT
+);
+
+ALTER TABLE `top_readers` ADD CONSTRAINT FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
+ALTER TABLE `top_readers` ADD CONSTRAINT FOREIGN KEY (`patron_id`) REFERENCES `patron` (`patron_id`);
 
 INSERT INTO genre (genre_name) VALUES ('horror');
 INSERT INTO genre (genre_name) VALUES ('scifi');
@@ -106,5 +112,9 @@ INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (1,12345,'2013-0
 INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (1,12346,'2013-03-14',true);
 INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (2,12348,'2015-09-18',false);
 INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (3,12350,'2015-04-11',false);
+
+INSERT INTO top_readers VALUES (1,2);
+INSERT INTO top_readers VALUES (3,1);
+INSERT INTO top_readers VALUES (5,3);
 
 COMMIT;
