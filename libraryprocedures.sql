@@ -148,3 +148,33 @@ BEGIN
 	INNER JOIN genre ON top_readers.genre_id=genre.genre_id
     ORDER BY top_readers.genre_id;
 END //
+
+/* Gets patron with most similar taste in books as given patron */
+CREATE PROCEDURE PATRONPAL(IN patron_number INT, OUT patron_pal_id INT)
+BEGIN
+	-- variables
+	DECLARE patron_count INT DEFAULT 0;
+	DECLARE same_books, max_same_books INT DEFAULT 0;
+
+	SELECT COUNT(patron_id) INTO patron_count
+	FROM patron;
+
+	WHILE patron_count > 0 DO
+		-- get number of books shared by another patron
+		SELECT COUNT(loan_id) INTO same_books
+			FROM book_loan
+			WHERE book IN (
+					SELECT book
+						FROM book_loan
+						WHERE patron_id=patron_count
+					)
+			AND patron_id <> patron_number;
+        
+		IF same_books > max_same_books AND same_books IS NOT NULL THEN
+			SET max_same_books = same_books;
+			SET patron_pal_id = patron_count;
+		END IF;
+
+		SET patron_count = patron_count - 1;
+	END WHILE;
+END //
