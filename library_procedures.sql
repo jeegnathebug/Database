@@ -146,7 +146,7 @@ BEGIN
 	FROM top_readers
 	INNER JOIN patron ON top_readers.patron_id=patron.patron_id
 	INNER JOIN genre ON top_readers.genre_id=genre.genre_id
-    ORDER BY top_readers.genre_id;
+	ORDER BY top_readers.genre_id;
 END //
 
 /* Gets patron with most similar taste in books as given patron */
