@@ -9,7 +9,10 @@
 2. Run library.sql
 
   `source 'path to file'`
-4. Run libraryprocedures.sql
+4. Run library_procedures.sql
+
+  `source 'path to file'`
+5. Run library_triggers.sql
 
   `source 'path to file'`
 
