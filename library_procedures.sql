@@ -31,7 +31,16 @@ END //
 /* Loans the given book to the given patron */
 CREATE PROCEDURE LOANBOOK(IN isbn INT, IN patron_id INT)
 BEGIN
-	INSERT INTO book_loan VALUES (null, patron_id, isbn, ADDDATE(CURDATE(), INTERVAL 14 DAY), 0);
+	DECLARE on_loan INT;
+	SELECT book INTO on_loan
+		FROM book_loan
+		WHERE book=isbn;
+	
+	IF on_loan IS NOT NULL THEN
+		INSERT INTO book_loan VALUES (null, patron_id, isbn, ADDDATE(CURDATE(), INTERVAL 14 DAY), 0);
+	ELSE
+		SIGNAL SQLSTATE '45000' SET message_text="The book is already on loan";
+	END IF;
 END //
 
 /* Renews the given book */
