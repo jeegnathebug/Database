@@ -16,5 +16,5 @@
 
   `source 'path to file'`
 
-### Library Database
-![Library Database](http://i1305.photobucket.com/albums/s547/jeegnathebug/library_zps5jr5dxdo.png?t=1460069173)
+### Library Database ERD
+![Library Database ERD](https://raw.githubusercontent.com/jeegnathebug/Database/master/library.png?token=AOuXQcrMICLMMc9c9RYCJygPd7oC2XN5ks5XGtQXwA%3D%3D)
