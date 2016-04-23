@@ -76,45 +76,4 @@ CREATE TABLE `top_readers` (
 ALTER TABLE `top_readers` ADD CONSTRAINT FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
 ALTER TABLE `top_readers` ADD CONSTRAINT FOREIGN KEY (`patron_id`) REFERENCES `patron` (`patron_id`);
 
-INSERT INTO genre (genre_name) VALUES ('horror');
-INSERT INTO genre (genre_name) VALUES ('scifi');
-INSERT INTO genre (genre_name) VALUES ('fantasy');
-INSERT INTO genre (genre_name) VALUES ('biography');
-INSERT INTO genre (genre_name) VALUES ('childrens');
-
-INSERT INTO author (firstname, lastname) VALUES ('George','Martin');
-INSERT INTO author (firstname, lastname) VALUES ('JK','Rowling');
-INSERT INTO author (firstname, lastname) VALUES ('Doc','Seuss');
-INSERT INTO author (firstname, lastname) VALUES ('Isaac','Asimov');
-
-INSERT INTO book VALUES (12345,'Harry Potter and some rock','2008-02-01',3);
-INSERT INTO book VALUES (12346,'Harry Potter and some cup','2005-03-12',3);
-INSERT INTO book VALUES (12347,'Harry Potter and some fugitive','2009-06-16',3);
-INSERT INTO book VALUES (12348,'Harry Potter and Jon Snows ultimate crossover','2012-02-14',1);
-INSERT INTO book VALUES (12349,'Game of Chairs','2012-02-14',3);
-INSERT INTO book VALUES (12350,'Silly Nonsense','2012-02-28',5);
-INSERT INTO book VALUES (12351,'My Robot','2014-09-24',2);
-
-INSERT INTO book_authors VALUES (2,12345);
-INSERT INTO book_authors VALUES (2,12346);
-INSERT INTO book_authors VALUES (2,12347);
-INSERT INTO book_authors VALUES (2,12348);
-INSERT INTO book_authors VALUES (1,12348);
-INSERT INTO book_authors VALUES (1,12349);
-INSERT INTO book_authors VALUES (3,12350);
-INSERT INTO book_authors VALUES (4,12351);
-
-INSERT INTO patron (firstname, lastname,fees,email) VALUES ('Joe','Sho',0,'joes@gmail.com');
-INSERT INTO patron (firstname, lastname,fees,email) VALUES ('Edna','Carmichael',10,'ednak@gmail.com');
-INSERT INTO patron (firstname, lastname,fees,email) VALUES ('Timmytim','Tim',0,'timtimtim@gmail.com');
-
-INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (1,12345,'2013-02-14',true);
-INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (1,12346,'2013-03-14',true);
-INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (2,12348,'2015-09-18',false);
-INSERT INTO book_loan (patron_id,book,due_date,returned) VALUES (3,12350,'2015-04-11',false);
-
-INSERT INTO top_readers VALUES (1,2);
-INSERT INTO top_readers VALUES (3,1);
-INSERT INTO top_readers VALUES (5,3);
-
 COMMIT;
