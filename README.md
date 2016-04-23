@@ -1,4 +1,4 @@
-# Database
+# Library Database
 
 ### Configure database
 1. Login to database using command. Omit `-p` if no password is required.
@@ -13,6 +13,10 @@
 
   `source 'path to file'`
 5. Run library_triggers.sql
+
+  `source 'path to file'`
+  
+6. Run library_demo.sql
 
   `source 'path to file'`
 
